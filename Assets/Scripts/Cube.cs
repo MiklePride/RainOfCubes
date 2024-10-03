@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshRenderer))]
@@ -9,7 +10,7 @@ public class Cube : MonoBehaviour
     private bool _hasBeenCollision;
 
     public bool HasBeenCollision => _hasBeenCollision;
-    public bool IsTimeOver => _lifeTime <= 0;
+    public bool IsDie => _lifeTime <= 0;
 
     private void Awake()
     {
@@ -22,47 +23,42 @@ public class Cube : MonoBehaviour
         _hasBeenCollision = false;
     }
 
-    private void Update()
-    {
-        if (_lifeTime > 0)
-            _lifeTime -= Time.deltaTime;
-    }
-
     private void OnDisable()
     {
         _meshRenderer.material.color = _defaultColor;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void Die()
     {
-        if (collision.collider.TryGetComponent(out Platform platform))
-        {
-            SetRandomColor();
-            SetRandomLifeTime();
+        if (_hasBeenCollision)
+            return;
 
-            _hasBeenCollision = true;
-        }
+        SetRandomColor();
+        StartRandomLifeTime();
+
+        _hasBeenCollision = true;
     }
 
     private void SetRandomColor()
     {
-        if (_hasBeenCollision)
-            return;
-
         float minValue = 0f;
         float maxValue = 1f;
-
         _meshRenderer.material.color = new Color(Random.Range(minValue, maxValue), Random.Range(minValue, maxValue), Random.Range(minValue, maxValue));
     }
 
-    private void SetRandomLifeTime()
+    private void StartRandomLifeTime()
     {
-        if (_hasBeenCollision)
-            return;
-
         int minLifeTime = 2;
-        int maxLifeTime = 6;
+        int maxLifeTime = 5;
+        _lifeTime = Random.Range(minLifeTime, maxLifeTime + 1);
 
-        _lifeTime = Random.Range(minLifeTime, maxLifeTime);
+        StartCoroutine(StartCountDown());
+    }
+
+    private IEnumerator StartCountDown()
+    {
+        yield return new WaitForSeconds(_lifeTime);
+
+        _lifeTime = 0;
     }
 }

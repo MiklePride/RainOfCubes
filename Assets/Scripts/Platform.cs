@@ -9,6 +9,7 @@ public class Platform : MonoBehaviour
     {
         if (collision.collider.TryGetComponent(out Cube cube))
         {
+            cube.Die();
             CollisionEntered?.Invoke(cube);
         }
     }

@@ -60,7 +60,7 @@ public class Rain : MonoBehaviour
     {
         Cube cube = _cubes.Peek();
 
-        if (cube.IsTimeOver)
+        if (cube.IsDie)
             _spawner.ReturnToPool(_cubes.Dequeue());
     }
 }

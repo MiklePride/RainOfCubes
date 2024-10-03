@@ -17,7 +17,7 @@ public class Spawner : MonoBehaviour
             createFunc: () => Instantiate(_prefab),
             actionOnGet:  (cube) => OnGetCube(cube),
             actionOnRelease: (cube) => cube.gameObject.SetActive(false),
-            actionOnDestroy: (cube) => Destroy(cube),
+            actionOnDestroy: (cube) => Destroy(cube.gameObject),
             collectionCheck: true,
             defaultCapacity: _poolCapacity,
             maxSize: _poolMaxSize);
@@ -26,9 +26,9 @@ public class Spawner : MonoBehaviour
     private void OnGetCube(Cube cube)
     {
         float minRandomValue = -15;
-        float maxRandomValue = 16;
+        float maxRandomValue = 15;
+        cube.transform.position = new Vector3(Random.Range(minRandomValue, maxRandomValue + 1), Altitude, Random.Range(minRandomValue, maxRandomValue + 1));
 
-        cube.transform.position = new Vector3(Random.Range(minRandomValue, maxRandomValue), Altitude, Random.Range(minRandomValue, maxRandomValue));
         cube.gameObject.SetActive(true);
     }
 

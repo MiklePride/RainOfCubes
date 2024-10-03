@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(MeshRenderer))]
 public class Cube : MonoBehaviour
@@ -9,8 +10,7 @@ public class Cube : MonoBehaviour
     private float _lifeTime;
     private bool _hasBeenCollision;
 
-    public bool HasBeenCollision => _hasBeenCollision;
-    public bool IsDie => _lifeTime <= 0;
+    public event UnityAction<Cube> CollisionEntered;
 
     private void Awake()
     {
@@ -28,7 +28,13 @@ public class Cube : MonoBehaviour
         _meshRenderer.material.color = _defaultColor;
     }
 
-    public void Die()
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.TryGetComponent(out Platform platform))
+            Die();
+    }
+
+    private void Die()
     {
         if (_hasBeenCollision)
             return;
@@ -60,5 +66,6 @@ public class Cube : MonoBehaviour
         yield return new WaitForSeconds(_lifeTime);
 
         _lifeTime = 0;
+        CollisionEntered?.Invoke(this);
     }
 }
